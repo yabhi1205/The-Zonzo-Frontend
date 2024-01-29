@@ -4,7 +4,7 @@ const Form = () => {
     return (
         <>
             <div className=" h-[85vh] w-screen flex">
-                <div className=" flex rounded-xl bg-blue-700 mx-auto my-auto">
+                <div className="w-full flex justify-center items-center rounded-xl  mx-auto my-auto">
 
                     <SignUpForm />
                 </div>

@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-const Nav = ({HomePage}) => {
+const Nav = ({ HomePage }) => {
     return (
         <>
             {/* <nav className="bg-white h-[15vh] border-gray-200 dark:bg-gray-900">
