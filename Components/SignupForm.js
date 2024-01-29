@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Alert from "./Alert";
+import Cookies from "universal-cookie";
+import { useRouter } from 'next/navigation'
 
 const SignUpForm = () => {
 
@@ -14,22 +16,43 @@ const SignUpForm = () => {
     const [AlertMessage, setAlertMessage] = useState("")
     const [AlertColor, setAlertColor] = useState(false)
     const [SignIn, setSignIn] = useState(false)
-
+    const cookies = new Cookies()
+    const router = useRouter()
+    
     const SubmitRequest = async () => {
-        // let url =process.env.Url
+        
+        let body = {}
+        if (SignIn) {
+            body["email"]=Email
+            body["password"]=OriginalPassword
+        }
+        else{
+            body["name"]=document.getElementById("floating_first_name").value + document.getElementById("floating_last_name").value
+            body["email"]=Email
+            body["password"]=OriginalPassword
+        }
         let url = "http://localhost:5000/api"
-        let fetched = await fetch(`${url}/signup`, {
+        let finalUrl = SignIn?`${url}/login`:`${url}/signup`
+        let fetched = await fetch(finalUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: JSON.stringify({
-                RandNo: "asdbakdabs"
-            })
+            body: JSON.stringify(body)
         })
         let fetchData = await fetched.json()
-        console.log(fetched, fetchData)
+        if(fetched.status!=200){
+            setAlertMessage(typeof(fetchData.error)=="string"?fetchData.error:fetchData.error.map((e)=>{return e.msg+"\n"}))
+            setAlertColor(false)
+            setAlertShow(true)
+        }
+        else{
+            cookies.set("authtoken",fetchData.authtoken)
+            // window.location="/dashboard"
+            router.push('/dashboard/')
+        }
+        // cookies.set("authToken","akjshakjsgjah")
     }
 
     const validatePassword = (password) => {
@@ -83,7 +106,7 @@ const SignUpForm = () => {
         setPassWordMessage(!(validatePassword(OriginalPassword).length == 0 && OriginalPassword == RepeatPassword))
     }
     const continueWithButton = (e) => {
-        if (!(document.getElementById("floating_first_name").value != "" && document.getElementById("floating_last_name") != "")) {
+        if (!SignIn && !(document.getElementById("floating_first_name").value != "" && document.getElementById("floating_last_name").value != "")) {
             setAlertColor(false)
             setAlertMessage("Please Enter the Name")
             setAlertShow(true)
@@ -101,7 +124,7 @@ const SignUpForm = () => {
             setAlertShow(true)
             return
         }
-        if (OriginalPassword != RepeatPassword) {
+        if (!SignIn && (OriginalPassword != RepeatPassword)) {
             setAlertColor(false)
             setAlertMessage("Password Doesn't Match")
             setAlertShow(true)
@@ -130,14 +153,14 @@ const SignUpForm = () => {
 
             <div className="w-full max-h-[55%] h-full max-w-sm overflow-hidden  bg-white border border-gray-200 rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700">
                 {
-                    SignIn ? 
+                    SignIn ?
                         <div className="w-full flex justify-center items-center">
-                            <div className="w-1/2 px-3 py-2" onClick={()=>setSignIn(true)}> Log In </div>
-                            <div className="w-1/2 bg-red-300" onClick={()=>setSignIn(false)}> Sign In </div>
-                        </div>:
+                            <div className="w-1/2 px-3 py-2" onClick={() => setSignIn(true)}> Log In </div>
+                            <div className="w-1/2 bg-red-300" onClick={() => setSignIn(false)}> Sign In </div>
+                        </div> :
                         <div className="w-full flex justify-center items-center">
-                            <div className="w-1/2 bg-red-300" onClick={()=>setSignIn(true)}> Log In </div>
-                            <div className="w-1/2 bg-red-100" onClick={()=>setSignIn(false)}> Sign In </div>
+                            <div className="w-1/2 bg-red-300" onClick={() => setSignIn(true)}> Log In </div>
+                            <div className="w-1/2 bg-red-100" onClick={() => setSignIn(false)}> Sign In </div>
                         </div>
                 }
                 <div className="w-full p-4 sm:p-6 md:p-8">

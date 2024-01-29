@@ -4,9 +4,17 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import image from "./Images/Profile.png"
+import Cookies from "universal-cookie";
+import { useRouter } from "next/navigation";
 
 function App() {
   const [open, setOpen] = useState(false);
+  const cookies = new Cookies()
+  const router = useRouter()
+  const logout = () => {
+    cookies.remove('authtoken')
+    // router.push('/')
+  }
 
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-sm">
@@ -47,7 +55,7 @@ function App() {
               <div className="relative">
                 <button
                   onClick={() => setOpen(!open)}
-                  onBlur={()=>setOpen(false)}
+                  onBlur={() => setOpen(false)}
                   className="flex text-gray-800 dark:text-white focus:outline-none"
                 >
                   <Image
@@ -60,16 +68,16 @@ function App() {
                 </button>
                 {open && (
                   <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
-                    <Link href="/profile">
+                    <button >
                       <div className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                         Profile
                       </div>
-                    </Link>
-                    <Link href="/logout">
-                      <div className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                    </button>
+                    <div className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <button onClick={logout()} >
                         Logout
-                      </div>
-                    </Link>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -158,11 +166,11 @@ function App() {
                 Profile
               </div>
             </Link>
-            <Link href="/logout">
-              <div className="block px-3 py-2 rounded-md text-base font-medium text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
+            <div className="block px-3 py-2 rounded-md text-base font-medium text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
+              <button onClick={logout()} href="/logout">
                 Logout
-              </div>
-            </Link>
+              </button>
+            </div>
           </div>
         </div>
       </div>
