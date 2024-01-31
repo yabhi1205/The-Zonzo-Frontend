@@ -1,6 +1,6 @@
 // Inside src/components/Nav.js
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import image from "./Images/Profile.png"
@@ -12,10 +12,29 @@ function App() {
   const cookies = new Cookies()
   const router = useRouter()
   const logout = () => {
-    cookies.remove('authtoken')
-    // router.push('/')
+    let confirmation = confirm("Do you want to logout")
+    if (confirmation) {
+      cookies.remove('authtoken')
+      router.push('/')
+    }
   }
+  const closeDropdown = () => {
+    setOpen(false);
+  };
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (open && !event.target.closest(".dropdown")) {
+        closeDropdown();
+      }
+    };
+
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, [open]);
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,10 +71,9 @@ function App() {
           </div>
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
-              <div className="relative">
+              {/* <div className="relative">
                 <button
                   onClick={() => setOpen(!open)}
-                  onBlur={() => setOpen(false)}
                   className="flex text-gray-800 dark:text-white focus:outline-none"
                 >
                   <Image
@@ -67,14 +85,45 @@ function App() {
                   />
                 </button>
                 {open && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
+                  <div onBlur={setOpen(false)} className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
                     <button >
                       <div className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                         Profile
                       </div>
                     </button>
                     <div className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                      <button onClick={logout()} >
+                      <button onClick={logout} >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div> */}
+              <div className="relative">
+                <button
+                  onClick={() => setOpen(!open)}
+                  className="flex text-gray-800 dark:text-white focus:outline-none"
+                >
+                  <Image
+                    src={image}
+                    alt="Avatar"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                </button>
+                {open && (
+                  <div
+                    className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5"
+                    onBlur={closeDropdown}
+                  >
+                    <div className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <button className="w-full text-left">
+                        Profile
+                      </button>
+                    </div>
+                    <div className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <button className="w-full text-left" onClick={logout}>
                         Logout
                       </button>
                     </div>
@@ -167,7 +216,7 @@ function App() {
               </div>
             </Link>
             <div className="block px-3 py-2 rounded-md text-base font-medium text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
-              <button onClick={logout()} href="/logout">
+              <button onClick={logout} href="/logout">
                 Logout
               </button>
             </div>

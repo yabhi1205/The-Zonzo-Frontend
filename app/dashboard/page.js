@@ -9,15 +9,15 @@ export default function Home() {
   const cookies = new Cookies()
   const router = useRouter()
   useEffect(() => {
-    // if(!(cookies.get("authtoken"))){
-    //   router.push("/")
-    // }
+    if(!(cookies.get("authtoken"))){
+      router.push("/")
+    }
   }, [])
   
   return (
     <>
       <App/>
-      {/* <Dashboard/> */}
+      <Dashboard/>
     </>
   );
 }
